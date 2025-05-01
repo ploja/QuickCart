@@ -13,6 +13,8 @@ export const useAppContext = () => {
 };
 
 export const AppContextProvider = (props) => {
+  const url = "http://localhost:3000";
+
   const currency = process.env.NEXT_PUBLIC_CURRENCY;
   const router = useRouter();
 
@@ -29,25 +31,29 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchUserData = async () => {
-    try {
-      if (user.publicMetadata.role === "seller") {
-        setIsSeller(true);
-      }
+    {
+      console.log("Funcion Start");
+    }
+    if (user.publicMetadata.role === "seller") {
+      setIsSeller(true);
+    }
 
-      const token = await getToken();
+    const token = await getToken;
+    if (!token) {
+      console.log("Funcion null");
+    }
 
-      const { data } = await axios.get("/api/user/data", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const { data } = await axios.get("/api/user/data", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      if (data.success) {
-        setUserData(data.user);
-        setCartItems(data.user.cartItems);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
+    if (data.success) {
+      setUserData(data.user);
+      setCartItems(data.user.cartItems);
+    } else {
+      toast.error(data.message);
     }
   };
 
